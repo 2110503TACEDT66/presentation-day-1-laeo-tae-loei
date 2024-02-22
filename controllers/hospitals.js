@@ -6,10 +6,39 @@ const Hospital = require('../models/Hospital');
 exports.getHospitals = async (req, res, next) => {
     try {
         let query;
+
+        //Copy req.query
+        const reqQuery = { ...req.query };
+
+        //Fields to exclude
+        const removeFields = ['select', 'sort'];
+
+        //Loop over removeFields and delete them from reqQuery
+        removeFields.forEach(param => delete reqQuery[param]);
+        console.log(reqQuery);
+
+        //Create query string
         let queryString = JSON.stringify(req.query);
         queryString = queryString.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
         
+        //Finding resource
         query = Hospital.find(JSON.parse(queryString));
+
+        //Select Fields
+        if (req.query.select) {
+            const fields = req.query.select.split(',').join(' ');
+            query = query.select(fields);
+        }
+
+        //Sort
+        if (req.query.sort) {
+            const sortBy = req.query.sort.split(',').join(' ');
+            query = query.sort(sortBy);
+        }
+        else {
+            query = query.sort('-createdAt');
+        }
+
 
         const hospitals = await query;
 
