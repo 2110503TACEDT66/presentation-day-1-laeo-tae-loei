@@ -34,6 +34,17 @@ const HostpialSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please add a region']
     },
+}, {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+});
+
+// Reverse populate with virtuals
+HostpialSchema.virtual('appointments', {
+    ref: 'Appointment',
+    localField: '_id',
+    foreignField: 'hospital',
+    justOne: false
 });
 
 module.exports = mongoose.model('Hospital', HostpialSchema);

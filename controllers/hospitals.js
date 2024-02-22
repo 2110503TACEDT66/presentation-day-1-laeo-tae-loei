@@ -1,4 +1,4 @@
-const Hospital = require('../models/Hospital');
+const Hospital = require('../models/hospital');
 
 //@desc     Get all hospitals
 //@route    GET /api/v1/hospitals
@@ -22,7 +22,7 @@ exports.getHospitals = async (req, res, next) => {
         queryString = queryString.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
         
         //Finding resource
-        query = Hospital.find(JSON.parse(queryString));
+        query = Hospital.find(JSON.parse(queryString)).populate('appointments');
 
         //Select Fields
         if (req.query.select) {
