@@ -39,6 +39,13 @@ const HostpialSchema = new mongoose.Schema({
     toObject: { virtuals: true }
 });
 
+// Cascade delete appointments when a hospital is deleted
+HostpialSchema.pre('deleteOne',  { document: true, query: false }, async function (next) {
+    console.log(`Appointments being removed from hospital ${this._id}`);
+    await this.model('Appointment').deleteMany({ hospital: this._id });
+    next();
+});
+
 // Reverse populate with virtuals
 HostpialSchema.virtual('appointments', {
     ref: 'Appointment',
