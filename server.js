@@ -16,9 +16,11 @@ app.use(express.json());
 app.use(cookieParser());
 
 const hospital = require('./routes/hospital');
+const appointment = require('./routes/appointment');
 const auth = require('./routes/auth');
 
 app.use('/api/v1/hospitals', hospital);
+app.use('/api/v1/appointments', appointment);
 app.use('/api/v1/auth', auth);
 
 
