@@ -14,7 +14,7 @@ VacCenter.getAll = result => {
             result(null, err);
             return;
         }
-        console.log("vacCenter: ", res);
+        console.log("vacCenters: ", res);
         result(null, res);
     });
 };
