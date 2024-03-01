@@ -53,7 +53,7 @@ const swaggerOptions = {
         info: {
             title: 'Library API',
             version: '1.0.0',
-            description: "A simple Express VacQ API",
+            description: "A simple Express Hotel Booking API",
         },
         servers: [
             {
@@ -67,12 +67,12 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
-const hospital = require('./routes/hospital');
-const appointment = require('./routes/appointment');
+// const hospital = require('./routes/hospital');
+// const appointment = require('./routes/appointment');
 const auth = require('./routes/auth');
 
-app.use('/api/v1/hospitals', hospital);
-app.use('/api/v1/appointments', appointment);
+// app.use('/api/v1/hospitals', hospital);
+// app.use('/api/v1/appointments', appointment);
 app.use('/api/v1/auth', auth);
 
 
