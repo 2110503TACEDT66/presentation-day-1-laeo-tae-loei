@@ -67,12 +67,12 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
-// const hospital = require('./routes/hospital');
-// const appointment = require('./routes/appointment');
+const hotel = require('./routes/hotel');
+//const booking = require('./routes/booking');
 const auth = require('./routes/auth');
 
-// app.use('/api/v1/hospitals', hospital);
-// app.use('/api/v1/appointments', appointment);
+app.use('/api/v1/hotel', hotel);
+//app.use('/api/v1/booking', booking);
 app.use('/api/v1/auth', auth);
 
 
