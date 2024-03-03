@@ -1,8 +1,82 @@
-// const hotels = require('../models/Hotel');
+const Booking = require('../models/Booking');
+const Hotel = require('../models/Hotel');
+const mongoose = require('mongoose');
+exports.createBooking = async (req,res,next)=>{
+    try {
+        const{bookDate, hotelId} = req.body;
+         // Check if the hotelId is a valid ObjectId
 
-// exports.bookHotel = async (req, res, next) => {
-//     try{
-        
-//     }
-// }
+        const hotel = await Hotel.findById(hotelId);
+        if(!hotel){
+            return res.status(404).json({
+                success: false,
+                message: `Hotel not found with id of ${hotelId}`
+            });
+        }
+        existedBooking = await Booking.find({user: req.user.id});
+        console.log(existedBooking);
+        if(existedBooking.length >= 3){
+            return res.status(400).json({
+                success: false,
+                message: `You can only book 3 nights`
+            });
+        }
+        const booking = await Booking.create({
+            bookDate: bookDate,
+            hotel: hotelId,
+            user: req.user.id
+        });
+        res.status(201).json({
+            success: true,
+            data: booking
+        });
+    }
+    catch (err) {
+        console.log(err.stack);
+        return res.status(500).json({
+            success: false,
+            message: "Cannot create Booking"
+        });
+    }
+}
+exports.getBookings= async (req,res,next)=>{
+    let query;
 
+    //General users can see only their booking
+    if(req.user.role != 'admin') {
+        query = Booking.find({user:req.user.id}).populate({
+            path: 'hotel',
+            select: 'name address telephoneNumber'
+        });
+    } else { //Admin can see all
+        if(req.params.hotelId) {
+            console.log(req.params.hotelId);
+
+            query = Booking.find({booking:req.params.hotelId}).populate({
+                path: 'hotel',
+                select: 'name address telephoneNumber'
+            });
+        } else {
+            query = Booking.find().populate({
+                path: 'hotel',
+                select: 'name address telephoneNumber'
+            });
+        }
+    }
+
+    try {
+        const bookings = await query;
+
+        res.status(200).json({
+            success: true,
+            count: bookings.length,
+            data: bookings
+        });
+    } catch (error) {
+        console.log(error.stack);
+        return res.status(500).json({
+            success: false,
+            message: "Cannot find Booking"
+        });
+    }
+};

@@ -7,7 +7,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  tel: {
+  telephoneNumber: {
     type: String,
     required: true,
     unique: true,
@@ -26,6 +26,11 @@ const UserSchema = new mongoose.Schema({
     required: [true, 'Please add a password'],
     minlength: 6,
     select: false
+    },
+    role: {
+      type: String,
+      enum: ['user', 'admin'],
+      default: 'user'
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date,

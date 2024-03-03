@@ -44,13 +44,15 @@ app.use(hpp());
 //Enable CORS
 app.use(cors());
 
-// const hospital = require('./routes/hospital');
-// const appointment = require('./routes/appointment');
+//Mount routers
+const hotel = require('./routes/hotel');
+const booking = require('./routes/booking');
 const auth = require('./routes/auth');
 
-// app.use('/api/v1/hospitals', hospital);
-// app.use('/api/v1/appointments', appointment);
 app.use('/api/v1/auth', auth);
+app.use('/api/v1/hotel', hotel);
+app.use('/api/v1/booking', booking);
+
 
 
 const PORT = process.env.PORT || 5000;
