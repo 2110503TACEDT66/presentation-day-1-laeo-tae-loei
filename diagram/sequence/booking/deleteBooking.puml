@@ -21,8 +21,8 @@ alt user is the booking owner or user is admin
     controllersBookings <-- modelBooking --: booking
     controllersBookings --> modelBooking ++:deleteOne()
     modelBooking --> BookingsDatabase ++: BookingSchema
-    BookingsDatabase --> modelBooking: booking
-    controllersBookings <-- modelBooking --: booking
+    BookingsDatabase --> modelBooking: {}
+    controllersBookings <-- modelBooking --: {}
     controllersBookings -> client --: response
 end
 
