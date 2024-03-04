@@ -14,7 +14,7 @@ database "<<MongoDB>>\n:bookings" as BookingsDatabase
 client -> server ++:req.post('/booking')
 server -> routerBookings ++:app.use('/booking', booking)
 routerBookings -> controllersBookings ++:addBooking()
-alt The user hasn't created up to 3 bookings yet
+alt The user hasn't created up to 3 bookings yet or user is admin
     controllersBookings -> modelBooking ++:create(req.body)
     modelBooking -> BookingsDatabase ++: BookingSchema
     BookingsDatabase --> modelBooking: booking
