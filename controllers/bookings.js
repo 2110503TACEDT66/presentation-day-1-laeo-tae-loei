@@ -14,7 +14,7 @@ exports.getBookings= async (req,res,next)=>{
         if(req.params.hotelId) {
             console.log(req.params.hotelId);
 
-            query = Booking.find({booking:req.params.hotelId}).populate({
+            query = Booking.find({hotel:req.params.hotelId}).populate({
                 path: 'hotel',
                 select: 'name address telephoneNumber'
             });
@@ -61,7 +61,7 @@ exports.getBooking= async (req,res,next)=>{
     }
 };
 
-exports.addBooking= async (req,res,next)=>{
+exports.createBooking = async (req,res,next)=>{
     try{
         req.body.hotel=req.params.hotelId;
 
