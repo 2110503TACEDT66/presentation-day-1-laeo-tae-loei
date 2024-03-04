@@ -14,9 +14,16 @@ database "<<MongoDB>>\n:bookings" as BookingsDatabase
 client -> server ++:req.delete('/booking/:id')
 server -> routerBookings ++:app.use('/booking')
 routerBookings -> controllersBookings ++:deleteBooking()
-controllersBookings -> modelBooking ++:findById(req.params.id)
-modelBooking -> BookingsDatabase ++: Delete booking in database
-BookingsDatabase --> modelBooking: Confirmation
-controllersBookings <-- modelBooking --: response
+alt user is the booking owner or user is admin
+    controllersBookings -> modelBooking ++:findById(req.params.id)
+    modelBooking -> BookingsDatabase ++: BookingSchema
+    BookingsDatabase --> modelBooking: booking
+    controllersBookings <-- modelBooking --: booking
+    controllersBookings --> modelBooking ++:deleteOne()
+    modelBooking --> BookingsDatabase ++: BookingSchema
+    BookingsDatabase --> modelBooking: booking
+    controllersBookings <-- modelBooking --: booking
+    controllersBookings -> client --: response
+end
 
 @enduml

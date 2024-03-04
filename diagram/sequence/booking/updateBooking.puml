@@ -14,9 +14,11 @@ database "<<MongoDB>>\n:bookings" as BookingsDatabase
 client -> server ++:req.put('/booking/:id')
 server -> routerBookings ++:app.use('/booking', booking)
 routerBookings -> controllersBookings ++:updateBooking()
-controllersBookings -> modelBooking ++:findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
-modelBooking -> BookingsDatabase ++: Update booking in database
-BookingsDatabase --> modelBooking: booking
-controllersBookings <-- modelBooking --: response
-
+alt user is the booking owner or user is admin
+    controllersBookings -> modelBooking ++:findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
+    modelBooking -> BookingsDatabase ++: BookingSchema
+    BookingsDatabase --> modelBooking: booking
+    controllersBookings <-- modelBooking --: booking
+    controllersBookings --> client --: response
+end
 @enduml

@@ -14,10 +14,11 @@ database "<<MongoDB>>\n:bookings" as BookingsDatabase
 client -> server ++:req.get('/booking/:id')
 server -> routerBookings ++:app.use('/booking', booking)
 routerBookings -> controllersBookings ++:getBooking()
-controllersBookings -> modelBooking ++:findById(req.params.id)
-modelBooking -> BookingsDatabase ++: BookingSchema
-BookingsDatabase --> modelBooking --: booking
-controllersBookings <-- modelBooking --: booking
-controllersBookings -> client --: response
-
+alt user is the booking owner or user is admin
+    controllersBookings -> modelBooking ++:findById(req.params.id)
+    modelBooking -> BookingsDatabase ++: BookingSchema
+    BookingsDatabase --> modelBooking --: booking
+    controllersBookings <-- modelBooking --: booking
+    controllersBookings -> client --: response
+end
 @enduml
