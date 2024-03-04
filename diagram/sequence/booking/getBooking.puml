@@ -1,0 +1,23 @@
+@startuml Get One Booking
+
+header Get One Booking Sequence Diagram
+footer Page %page% of %lastpage%
+title "Manage Booking (GET ONE)"
+
+participant "Client" as client
+participant "<<JavaScript>>\n:Server" as server
+participant "<<Router>>\n:Booking" as routerBookings
+participant "<<Controllers>>\n:Bookings" as controllersBookings
+participant "<<Model>>\n:Booking" as modelBooking
+database "<<MongoDB>>\n:bookings" as BookingsDatabase
+
+client -> server ++:req.get('/booking/:id')
+server -> routerBookings ++:app.use('/booking', booking)
+routerBookings -> controllersBookings ++:getBooking()
+controllersBookings -> modelBooking ++:findById(req.params.id)
+modelBooking -> BookingsDatabase ++: BookingSchema
+BookingsDatabase --> modelBooking --: booking
+controllersBookings <-- modelBooking --: booking
+controllersBookings -> client --: response
+
+@enduml

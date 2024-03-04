@@ -1,0 +1,23 @@
+@startuml Manage Hotel (PUT)
+
+header Sample Hotel Sequence Diagram
+footer Page %page% of %lastpage%
+title "Manage Hotel (PUT)"
+
+participant "Client" as client
+participant "<<JavaScript>>\n:Server" as server
+participant "<<Router>>\n:Hotels" as routerHotels
+participant "<<Controllers>>\n:Hotels" as controllersHotels
+participant "<<Model>>\n:Hotel" as modelHotel
+database "<<MongoDB>>\n:hotels" as HotelsDatabase
+
+client -> server ++:req.put('/hotel/:id')
+server -> routerHotels ++:app.use('/hotel', hotels)
+routerHotels -> controllersHotels ++:updateHotel()
+controllersHotels -> modelHotel ++:findByIdAndUpdate(req.params.id, req.body)
+modelHotel -> HotelsDatabase ++: HotelSchema
+HotelsDatabase --> modelHotel --: hotel
+controllersHotels <-- modelHotel --: hotel
+controllersHotels -> client --: response
+
+@enduml

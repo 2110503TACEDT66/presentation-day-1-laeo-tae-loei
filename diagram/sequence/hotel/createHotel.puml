@@ -1,0 +1,23 @@
+@startuml Manage Hotel (POST)
+
+header Sample Hotel Sequence Diagram
+footer Page %page% of %lastpage%
+title "Manage Hotel (POST)"
+
+participant "Client" as client
+participant "<<JavaScript>>\n:Server" as server
+participant "<<Router>>\n:Hotels" as routerHotels
+participant "<<Controllers>>\n:Hotels" as controllersHotels
+participant "<<Model>>\n:Hotel" as modelHotel
+database "<<MongoDB>>\n:hotels" as HotelsDatabase
+
+client -> server ++:req.post('/hotel')
+server -> routerHotels ++:app.use('/hotel', hotel)
+routerHotels -> controllersHotels ++:createHotel()
+controllersHotels -> modelHotel ++:create(req.body)
+modelHotel -> HotelsDatabase ++: HotelSchema
+HotelsDatabase --> modelHotel --: hotel
+controllersHotels <-- modelHotel --: hotel
+controllersHotels -> client --: response
+
+@enduml
