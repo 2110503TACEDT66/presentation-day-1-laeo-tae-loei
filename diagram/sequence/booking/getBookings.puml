@@ -1,0 +1,28 @@
+@startuml Get All Bookings
+
+header Get All Bookings Sequence Diagram
+footer Page %page% of %lastpage%
+title "Manage Bookings (GET ALL)"
+
+participant "Client" as client
+participant "<<JavaScript>>\n:Server" as server
+participant "<<Router>>\n:Booking" as routerBookings
+participant "<<Controllers>>\n:Bookings" as controllersBookings
+participant "<<Model>>\n:Booking" as modelBooking
+database "<<MongoDB>>\n:bookings" as BookingsDatabase
+
+client -> server ++:req.get('/booking')
+server -> routerBookings ++:app.use('/booking', booking)
+routerBookings -> controllersBookings ++:getBookings()
+alt User
+    controllersBookings -> modelBooking ++:find({ user: req.user.id })
+else Admin
+    controllersBookings -> modelBooking ++:find()
+end
+
+modelBooking -> BookingsDatabase ++: BookingSchema
+BookingsDatabase --> modelBooking --: booking
+controllersBookings <-- modelBooking --: booking
+controllersBookings -> client --: response
+
+@enduml
