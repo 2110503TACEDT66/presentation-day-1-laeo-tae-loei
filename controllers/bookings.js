@@ -1,5 +1,6 @@
 const Booking = require('../models/Booking');
 const Hotel = require('../models/Hotel');
+const Payment = require('../models/Payment');
 
 exports.getBookings= async (req,res,next)=>{
     let query;
@@ -89,9 +90,33 @@ exports.createBooking = async (req,res,next)=>{
 
         const booking = await Booking.create(req.body);
 
+        let hotel_price;
+        if (req.body.address && req.body.address.includes('Bangkok')) {
+            hotel_price = 2000;
+        }
+        else if (req.body.address && req.body.address.includes('Chiang Mai')) {
+            hotel_price = 1500;
+        }
+        else if (req.body.address && req.body.address.includes('Phuket')) {
+            hotel_price = 2500;
+        }
+        else {
+            hotel_price = 1000;
+        }
+
+        const payment = await Payment.create({
+            booking:booking._id, 
+            amount:hotel_price,
+            logs: [{
+                amount: hotel_price,
+                description: 'Hotel price'
+            }]
+        });
+
         res.status(200).json({
             success:true,
-            data: booking
+            data: booking,
+            payment: payment
         });
     }   catch (error) {
             console.log(error.stack);
@@ -112,16 +137,39 @@ exports.updateBooking= async (req,res,next)=>{
 	    if(booking.user.toString()!== req.user.id && req.user.role !== 'admin'){
 		    return res.status(401).json({success:false,message:`User ${req.user.id} is not authorized to update this booking`});
 	    }
-		
+
+        let fee = 100;
+        let logDescription = '';
+
+        // Check if hotel has been changed
+        if (req.body.hotel && booking.hotel.toString() != req.body.hotel) {
+            fee += 900; // Add fee for changing hotel
+            logDescription += `Change hotel from ${booking.hotel} to ${req.body.hotel}. `;
+        }
+
 		booking = await Booking.findByIdAndUpdate(req.params.id, req.body, {
 			new:true,
 			runValidators:true
 		});
-		
+
+        payment = await Payment.findOneAndUpdate(
+            { booking: booking._id }, 
+            { 
+                $inc: { amount: fee },
+                $push: { logs: { amount: fee, description: logDescription } }
+            },
+                    {
+                new: true,
+                runValidators: true
+            }
+        );		
+
 		res.status(200).json({
 			success:true,
-			data: booking
+			data: booking,
+            payment: payment
 		});
+
 	} catch (error) {
 		console.log(error.stack);
 		return res.status(500).json({success:false,message:"Cannot update booking"});
