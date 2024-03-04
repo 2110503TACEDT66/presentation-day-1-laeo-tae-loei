@@ -1,11 +1,55 @@
 @startuml
 left to right direction
-package "Booking"{
-    class "<<Application>>\nBookingService" as BookingService{}
+package "Hotel Booking"{
+
+    class "<<Application>>\nHotel Booking" as HotelBookingService{}
+
+    '======================= Representation ======================='
+    class "<<Representation>>\nUser" as RepresentationUser {
+        -name: String
+        -telephoneNumber: String
+        -email: String
+        -password: String
+        -role: String
+    }
+    
+    class "<<Representation>>\nBooking" as RepresentationBooking {
+        -bookDate: Date
+        -user: ObjectId
+        -hotel: ObjectId
+        -createAt: Date
+    }
+
+    class "<<Representation>>\nHotel" as RepresentationHotel {
+        -name: String
+        -address: String
+        -telephoneNumber: String
+    }
+
+    '======================= Resource ======================='
+
+    class "<<Resource>>\nAuthentication" as ResourceAuthentication{}
+
+    class "<<Resource>>\nregister" as ResourceRegister{
+        <<POST>> +register() : User
+    }
+
+    class "<<Resource>>\nlogin" as ResourceLogin{
+        <<POST>> +login() : User
+    }
+
+    class "<<Resource>>\nlogout" as ResourceLogout{
+        <<GET>> +logout() : void
+    }
+
+    class "<<Resource>>\ngetMe" as ResourceMe{
+        <<GET>> +getMe() : User
+    }
+
 
     class "<<Resource>>\nBookings" as ResourceBookings{
         <<GET>> +getBookings(): Booking
-        <<POST>> +createBooking(): Booking
+        <<POST>> +addBooking(): Booking
     }
 
     class "<<Resource>>\nBooking" as ResourceBooking {
@@ -14,17 +58,37 @@ package "Booking"{
         <<DELETE>> +deleteBooking(): void
     }
 
-    class "<<Representation>>\nBooking" as RepresentationBooking {
-        -bookDate
-        -user
-        -hotel
-        -createAt
+    class "<<Resource>>\nHotels" as ResourceHotels{
+        <<GET>> +getHotels(): Hotel
+        <<POST>> +createHotel(): Hotel
     }
 
+    class "<<Resource>>\nHotel" as ResourceHotel {
+        <<GET>> +getHotel(): Hotel
+        <<PUT>> +updateHotel(): Hotel
+        <<DELETE>> +deleteHotel(): void
+    }
 }
 
-BookingService ..> ResourceBookings:"/booking\n<<Path>>"
+
+HotelBookingService ..> ResourceHotels:"/hotels\n<<Path>>"
+HotelBookingService ..> ResourceBookings:"/booking\n<<Path>>"
+HotelBookingService ..> ResourceAuthentication: "/auth\n<<Path>>"
+
+ResourceHotels ..> ResourceHotel: "/{hotelId}\n<<Path>>"
 ResourceBookings ..> ResourceBooking: "/{bookingId}\n<<Path>>"
 ResourceBooking ..> RepresentationBooking: "<<use>>"
+ResourceHotel ..> RepresentationHotel: "<<use>>"
+
+ResourceAuthentication ..> ResourceRegister: "/register\n<<Path>>"
+ResourceAuthentication ..> ResourceLogin: "/login\n<<Path>>"
+ResourceAuthentication ..> ResourceLogout: "/logout\n<<Path>>"
+ResourceAuthentication ..> ResourceMe: "/me\n<<Path>>"
+
+ResourceRegister ..> RepresentationUser: "<<use>>"
+ResourceLogin ..> RepresentationUser: "<<use>>"
+ResourceMe ..> RepresentationUser: "<<use>>"
+ResourceLogout ..> RepresentationUser: "<<use>>"
+
 
 @enduml
