@@ -53,7 +53,8 @@ exports.getBooking= async (req,res,next)=>{
         if(!booking) {
             return res.status(404).json({sucess: false, message: `No booking with the id of ${req.params.id}`});
         }
-
+        
+        //Make sure user is the booking owner
         if(booking.user.toString()!== req.user.id && req.user.role !== 'admin'){
 		    return res.status(401).json({success:false,message:`User ${req.user.id} is not authorized to update this booking`});
 	    }
