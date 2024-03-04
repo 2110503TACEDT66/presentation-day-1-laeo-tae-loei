@@ -2,7 +2,7 @@
 
 header Get All Bookings Sequence Diagram
 footer Page %page% of %lastpage%
-title "Manage Bookings (GET ALL)"
+title "Get All Bookings"
 
 participant "Client" as client
 participant "<<JavaScript>>\n:Server" as server

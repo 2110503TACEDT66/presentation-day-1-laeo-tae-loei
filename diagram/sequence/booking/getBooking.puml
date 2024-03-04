@@ -1,8 +1,8 @@
-@startuml Get One Booking
+@startuml Get Single Booking
 
-header Get One Booking Sequence Diagram
+header Get Single Booking Sequence Diagram
 footer Page %page% of %lastpage%
-title "Manage Booking (GET ONE)"
+title "Get Single Booking"
 
 participant "Client" as client
 participant "<<JavaScript>>\n:Server" as server
