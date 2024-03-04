@@ -1,0 +1,30 @@
+@startuml
+left to right direction
+package "Booking"{
+    class "<<Application>>\nBookingService" as BookingService{}
+
+    class "<<Resource>>\nBookings" as ResourceBookings{
+        <<GET>> +getBookings(): Booking
+        <<POST>> +createBooking(): Booking
+    }
+
+    class "<<Resource>>\nBooking" as ResourceBooking {
+        <<GET>> +getBooking(): Booking
+        <<PUT>> +updateBooking(): Booking
+        <<DELETE>> +deleteBooking(): void
+    }
+
+    class "<<Representation>>\nBooking" as RepresentationBooking {
+        -bookDate
+        -user
+        -hotel
+        -createAt
+    }
+
+}
+
+BookingService ..> ResourceBookings:"/booking\n<<Path>>"
+ResourceBookings ..> ResourceBooking: "/{bookingId}\n<<Path>>"
+ResourceBooking ..> RepresentationBooking: "<<use>>"
+
+@enduml
