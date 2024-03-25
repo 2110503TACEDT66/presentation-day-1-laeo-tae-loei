@@ -90,26 +90,24 @@ exports.createBooking = async (req,res,next)=>{
 
         const booking = await Booking.create(req.body);
 
-        let hotel_price;
-        if (req.body.address && req.body.address.includes('Bangkok')) {
-            hotel_price = 2000;
+        const hotel_price = hotel.basePrice;
+
+        if (req.body.roomType === 'Suite') {
+            if (hotel.starRating === 5) hotel_price += 1000;
+            else hotel_price += 600;
         }
-        else if (req.body.address && req.body.address.includes('Chiang Mai')) {
-            hotel_price = 1500;
+        else if (req.body.roomType === 'Executive Suite') {
+            hotel_price += 2000;
         }
-        else if (req.body.address && req.body.address.includes('Phuket')) {
-            hotel_price = 2500;
-        }
-        else {
-            hotel_price = 1000;
-        }
+
+        hotel_price *= req.body.duration;
 
         const payment = await Payment.create({
             booking:booking._id, 
             amount:hotel_price,
             logs: [{
                 amount: hotel_price,
-                description: 'Hotel price'
+                description: `User ${req.body.user} book hotel ${hotel._id} room type  ${req.body.roomType} for ${req.body.duration} nights. Total price: ${hotel_price}`
             }]
         });
 

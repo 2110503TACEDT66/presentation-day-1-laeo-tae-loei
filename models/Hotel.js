@@ -12,6 +12,14 @@ const hotelSchema = new mongoose.Schema({
     telephoneNumber: {
         type: String,
         required: true
+    },
+    starRating: {
+        type: Number,
+        required: true
+    },
+    basePrice: {
+        type: Number,
+        required: true
     }
 });
 

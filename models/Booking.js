@@ -15,6 +15,14 @@ const BookingSchema = new mongoose.Schema({
         ref: 'Hotel',
         required: true
     },
+    roomType: {
+        type: String,
+        required: true
+    },
+    duration: {
+        type: Number,
+        required: true
+    },
     createdAt: {
         type: Date,
         default: Date.now
