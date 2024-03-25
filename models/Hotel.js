@@ -20,6 +20,10 @@ const hotelSchema = new mongoose.Schema({
     basePrice: {
         type: Number,
         required: true
+    },
+    images: {
+        type: Object,
+        required: true
     }
 });
 
