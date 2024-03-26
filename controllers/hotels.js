@@ -17,6 +17,13 @@ exports.getHotels= async (req,res,next) => {
     let queryStr = JSON.stringify(req.query);
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match=>`$${match}`);
 
+    // Add a condition to search for location in the address field
+    if (req.query.address) {
+        queryStr = JSON.parse(queryStr);
+        queryStr.address = { $regex: req.query.address, $options: 'i' };
+        queryStr = JSON.stringify(queryStr);
+    }
+
     //finding resource
     query = Hotel.find(JSON.parse(queryStr));//.populate('bookings');
 
