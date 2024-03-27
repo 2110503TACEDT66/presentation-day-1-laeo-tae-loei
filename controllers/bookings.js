@@ -90,7 +90,7 @@ exports.createBooking = async (req,res,next)=>{
 
         const booking = await Booking.create(req.body);
 
-        const hotel_price = hotel.basePrice;
+        let hotel_price = hotel.basePrice;
 
         if (req.body.roomType === 'Suite') {
             if (hotel.starRating === 5) hotel_price += 1000;
@@ -100,7 +100,7 @@ exports.createBooking = async (req,res,next)=>{
             hotel_price += 2000;
         }
 
-        hotel_price *= req.body.duration;
+        hotel_price = hotel_price * req.body.duration;
 
         const payment = await Payment.create({
             booking:booking._id, 
