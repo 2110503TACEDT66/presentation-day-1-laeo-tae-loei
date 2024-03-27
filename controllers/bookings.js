@@ -150,22 +150,21 @@ exports.updateBooking= async (req,res,next)=>{
 			runValidators:true
 		});
 
-        payment = await Payment.findOneAndUpdate(
-            { booking: booking._id }, 
-            { 
-                $inc: { amount: fee },
-                $push: { logs: { amount: fee, description: logDescription } }
-            },
-                    {
-                new: true,
-                runValidators: true
-            }
-        );		
+        // payment = await Payment.findOneAndUpdate(
+        //     { booking: booking._id }, 
+        //     { 
+        //         $inc: { amount: fee },
+        //         $push: { logs: { amount: fee, description: logDescription } }
+        //     },
+        //             {
+        //         new: true,
+        //         runValidators: true
+        //     }
+        // );		
 
 		res.status(200).json({
 			success:true,
 			data: booking,
-            payment: payment
 		});
 
 	} catch (error) {
