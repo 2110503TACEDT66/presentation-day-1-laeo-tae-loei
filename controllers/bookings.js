@@ -8,8 +8,11 @@ exports.getBookings= async (req,res,next)=>{
     //General users can see only their booking
     if(req.user.role != 'admin') {
         query = Booking.find({user:req.user.id}).populate({
+            path: 'user',
+            select: 'name email telephoneNumber'
+        }).populate({
             path: 'hotel',
-            select: 'name address telephoneNumber'
+            select: 'name telephoneNumber address'
         });
     } else { //Admin can see all
         if(req.params.hotelId) {
@@ -18,12 +21,19 @@ exports.getBookings= async (req,res,next)=>{
             query = Booking.find({hotel:req.params.hotelId}).populate({
                 path: 'hotel',
                 select: 'name address telephoneNumber'
+            }).populate({
+                path: 'user',
+                select: 'name telephoneNumber email'
             });
-        } else {
+
+            } else {
             query = Booking.find().populate({
                 path: 'hotel',
                 select: 'name address telephoneNumber'
-            });
+        }).populate({
+            path: 'user',
+            select: 'name telephoneNumber email'
+        });
         }
     }
 
@@ -33,7 +43,8 @@ exports.getBookings= async (req,res,next)=>{
         res.status(200).json({
             success: true,
             count: bookings.length,
-            data: bookings
+            data: bookings,
+            isAdmin: req.user.role === 'admin' ? true : false
         });
     } catch (error) {
         console.log(error.stack);
@@ -49,6 +60,9 @@ exports.getBooking= async (req,res,next)=>{
         const booking = await Booking.findById(req.params.id).populate({
             path: 'hotel',
             select: 'name address telephoneNumber'
+        }).populate({
+            path: 'user',
+            select: 'name telephoneNumber email'
         });
 
         if(!booking) {
@@ -107,7 +121,7 @@ exports.createBooking = async (req,res,next)=>{
             amount:hotel_price,
             logs: [{
                 amount: hotel_price,
-                description: `User ${req.body.user} book hotel ${hotel._id} room type  ${req.body.roomType} for ${req.body.duration} nights. Total price: ${hotel_price}`
+                description: `User ${req.body.user} book hotel ${hotel._id} room type ${req.body.roomType} for ${req.body.duration} nights. Total price: ${hotel_price}`
             }]
         });
 
@@ -137,7 +151,7 @@ exports.updateBooking= async (req,res,next)=>{
 	    }
 
         let fee = 100;
-        let logDescription = '';
+        let logDescription = 'Update booking';
 
         // Check if hotel has been changed
         if (req.body.hotel && booking.hotel.toString() != req.body.hotel) {
@@ -150,21 +164,22 @@ exports.updateBooking= async (req,res,next)=>{
 			runValidators:true
 		});
 
-        // payment = await Payment.findOneAndUpdate(
-        //     { booking: booking._id }, 
-        //     { 
-        //         $inc: { amount: fee },
-        //         $push: { logs: { amount: fee, description: logDescription } }
-        //     },
-        //             {
-        //         new: true,
-        //         runValidators: true
-        //     }
-        // );		
+        payment = await Payment.findOneAndUpdate(
+            { booking: booking._id }, 
+            { 
+                $inc: { amount: fee },
+                $push: { logs: { amount: fee, description: logDescription } }
+            },
+                    {
+                new: true,
+                runValidators: true
+            }
+        );		
 
 		res.status(200).json({
 			success:true,
 			data: booking,
+            payment: payment
 		});
 
 	} catch (error) {
