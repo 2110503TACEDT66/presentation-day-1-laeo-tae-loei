@@ -150,36 +150,36 @@ exports.updateBooking= async (req,res,next)=>{
 		    return res.status(401).json({success:false,message:`User ${req.user.id} is not authorized to update this booking`});
 	    }
 
-        let fee = 100;
-        let logDescription = 'Update booking';
+        // let fee = 100;
+        // let logDescription = 'Update booking';
 
         // Check if hotel has been changed
-        if (req.body.hotel && booking.hotel.toString() != req.body.hotel) {
-            fee += 900; // Add fee for changing hotel
-            logDescription += `Change hotel from ${booking.hotel} to ${req.body.hotel}. `;
-        }
+        // if (req.body.hotel && booking.hotel.toString() != req.body.hotel) {
+        //     fee += 900; // Add fee for changing hotel
+        //     logDescription += `Change hotel from ${booking.hotel} to ${req.body.hotel}. `;
+        // }
 
 		booking = await Booking.findByIdAndUpdate(req.params.id, req.body, {
 			new:true,
 			runValidators:true
 		});
 
-        payment = await Payment.findOneAndUpdate(
-            { booking: booking._id }, 
-            { 
-                $inc: { amount: fee },
-                $push: { logs: { amount: fee, description: logDescription } }
-            },
-                    {
-                new: true,
-                runValidators: true
-            }
-        );		
+        // payment = await Payment.findOneAndUpdate(
+        //     { booking: booking._id }, 
+        //     { 
+        //         $inc: { amount: fee },
+        //         $push: { logs: { amount: fee, description: logDescription } }
+        //     },
+        //             {
+        //         new: true,
+        //         runValidators: true
+        //     }
+        // );		
+        console.log(booking);
 
 		res.status(200).json({
 			success:true,
 			data: booking,
-            payment: payment
 		});
 
 	} catch (error) {
